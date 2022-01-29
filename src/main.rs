@@ -1,5 +1,7 @@
 mod map;
+mod map_builder;
 mod player;
+
 // Make own prelude to simplify module access
 // b/c top-level of crate, don't need to make public - mods branching from crate are visible throughout program
 mod prelude {
@@ -8,6 +10,7 @@ mod prelude {
     pub const SCREEN_HEIGHT: i32 = 50;
     pub use crate::map::*;
     pub use crate::player::*;
+    pub use crate::map_builder::*;
 }
 
 use prelude::*; // use prelude above to make it available to the main scope in main.rs
