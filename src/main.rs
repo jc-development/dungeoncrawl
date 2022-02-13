@@ -1,16 +1,18 @@
 #![warn(clippy::pandantic)]
 mod map;
 mod map_builder;
-mod player;
 mod camera;
 
 // Make own prelude to simplify module access
 // b/c top-level of crate, don't need to make public - mods branching from crate are visible throughout program
 mod prelude {
+    pub use bracket_lib::prelude::*;
+    pub use legion::*;
+    pub use legion::world::SubWorld;
+    pub use legion::systems::CommandBuffer;
+
     pub use crate::map::*;
     pub use crate::map_builder::*;
-    pub use crate::player::*;
-    pub use bracket_lib::prelude::*; // publicly using re-exports inside this prelude; anything that uses this prelude, also uses bracket_lib
     pub use crate::camera::*;
 
     pub const SCREEN_WIDTH: i32 = 80;
@@ -22,20 +24,25 @@ mod prelude {
 use prelude::*; // use prelude above to make it available to the main scope in main.rs
 
 struct State {
-    map: Map,
-    player: Player,
-    camera: Camera,
+    ecs: World,
+    resources: Resources,
+    systems: Schedule,
 }
 
 impl State {
     fn new() -> Self {
+        let mut ecs = World::default();
+        let mut resources = Resources::default();
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
 
+        resources.insert(map_builder.map);
+        resources.insert(Camera::new(map_builder.player_start));
+
         Self {
-            map: map_builder.map,
-            player: Player::new(map_builder.player_start),
-            camera: Camera::new(map_builder.player_start),
+            ecs,
+            resources,
+            systems: build_scheduler()
         }
     }
 }
@@ -46,9 +53,8 @@ impl GameState for State {
         ctx.cls();
         ctx.set_active_console(1);
         ctx.cls();
-        self.player.update(ctx, &self.map, &mut self.camera);
-        self.map.render(ctx, &self.camera);
-        self.player.render(ctx, &self.camera);
+        // TODO: Execute Systems
+        // TODO: Render Draw Buffer
     }
 }
 
