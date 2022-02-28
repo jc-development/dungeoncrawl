@@ -69,7 +69,6 @@ impl GameState for State {
         ctx.cls();
         self.resources.insert(ctx.key); // holds keyboard state
         self.systems.execute(&mut self.ecs, &mut self.resources);
-        self.systems.execute(&mut self.ecs, &mut self.resources);
         render_draw_buffer(ctx).expect("Render error");
     }
 }
