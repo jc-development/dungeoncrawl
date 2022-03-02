@@ -15,3 +15,10 @@ pub struct Enemy;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct MovingRandomly;
+
+// message component, storing a reference to an entity
+#[derive(Clone, Copy, Debug, PartialEq)]
+pub struct WantsToMove {
+  pub entity: Entity,
+  pub destination: Point
+}
